@@ -120,7 +120,22 @@ fun timeForHalfWay(t1: Double, v1: Double,
  */
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
-                       rookX2: Int, rookY2: Int): Int = TODO()
+                       rookX2: Int, rookY2: Int): Int {
+    var b1 = false
+    var b2 = false
+    if (kingX == rookX1 || kingY == rookY1) {
+        b1 = true
+    }
+    if (kingX == rookX2 || kingY == rookY2) {
+        b2 = true
+    }
+    return when {
+        b1 && !b2 -> 1
+        b2 && !b1 -> 2
+        b1 && b2 -> 3
+        else -> 0
+    }
+}
 
 /**
  * Простая
