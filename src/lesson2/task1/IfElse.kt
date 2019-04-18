@@ -1,9 +1,11 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson2.task1
 
 import lesson1.task1.discriminant
 import kotlin.math.max
 import kotlin.math.sqrt
+import kotlin.reflect.jvm.internal.impl.types.checker.TypeCheckerContext
 
 /**
  * Пример
@@ -24,12 +26,14 @@ fun quadraticRootNumber(a: Double, b: Double, c: Double): Int {
  *
  * Получить строковую нотацию для оценки по пятибалльной системе
  */
-fun gradeNotation(grade: Int): String = when (grade) {
-    5 -> "отлично"
-    4 -> "хорошо"
-    3 -> "удовлетворительно"
-    2 -> "неудовлетворительно"
-    else -> "несуществующая оценка $grade"
+fun gradeNotation(grade: Int): String {
+    return when (grade) {
+        5 -> "отлично"
+        4 -> "хорошо"
+        3 -> "удовлетворительно"
+        2 -> "неудовлетворительно"
+        else -> "несуществующая оценка $grade"
+    }
 }
 
 /**
@@ -62,7 +66,18 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String {
+    if (age % 100 in 5..20) {
+        return "$age лет"
+    } else {
+        return when (age % 10) {
+            1 -> "$age год"
+            2, 3, 4 -> "$age года"
+            0, 5, 6, 7, 8, 9 -> "$age лет"
+            else -> ""
+        }
+    }
+}
 
 /**
  * Простая
