@@ -3,6 +3,7 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
 import kotlin.reflect.jvm.internal.impl.types.checker.TypeCheckerContext
@@ -149,7 +150,22 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
  */
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
-                          bishopX: Int, bishopY: Int): Int = TODO()
+                          bishopX: Int, bishopY: Int): Int {
+    var b1 = false
+    var b2 = false
+    if (kingX == rookX || kingY == rookY) {
+        b1 = true
+    }
+    if (abs(kingX - bishopX) == abs(kingY - bishopY)) {
+        b2 = true
+    }
+    return when {
+        b1 && !b2 -> 1
+        b2 && !b1 -> 2
+        b1 && b2 -> 3
+        else -> 0
+    }
+}
 
 /**
  * Простая
