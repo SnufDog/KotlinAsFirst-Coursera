@@ -3,8 +3,10 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
+import java.lang.Math.pow
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 import kotlin.reflect.jvm.internal.impl.types.checker.TypeCheckerContext
 
@@ -175,7 +177,35 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    val gipot: Double
+    var a = a
+    var b = b
+    var c = c
+    if ((a >= c) and (a >= b)) {
+        gipot = a
+        a = b
+        b = c
+    } else if ((b >= a) and (b >= c)) {
+        gipot = b
+        b = c
+    } else if ((c >= a) and (c >= b)) {
+        gipot = c
+    } else {
+        return -1
+    }
+    c = gipot
+    return if ((a + b > c) and (a + c > b) and (b + c > a)) {
+        when {
+            pow(c, 2.0) == (pow(a, 2.0) + pow(b, 2.0)) -> 1
+            pow(c, 2.0) > (pow(a, 2.0) + pow(b, 2.0)) -> 2
+            else -> 0
+        }
+    } else {
+        -1
+    }
+
+}
 
 /**
  * Средняя
@@ -185,4 +215,23 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
+    (b == c) -> 0
+    (a == d) -> 0
+//    ((a < c) && (b < c)) -> -1
+//    ((a > d) && (b > d)) -> -1
+    ((a in c..d) && (b in c..d)) -> b - a
+    ((c in a..b) && (d in a..b)) -> d - c
+    ((a < c && b in (c + 1 until d))) -> b - c
+    ((c < a && d in (a + 1 until b))) -> d - a
+    ((b > d && a in (c + 1 until d))) -> d - a
+    ((d > b && c in (a + 1 until b))) -> d - b
+    else -> -1
+}
+
+
+//        if (((c == min(min(a, b), min(c, d))) and (d == max(max(a, b), max(c, d)))) or
+//                (((a == min(min(a, b), min(c, d))) and (b == max(max(a, b), max(c, d)))))) {
+//
+//        }
+//    }
