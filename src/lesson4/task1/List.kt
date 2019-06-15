@@ -3,6 +3,9 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson1.task1.sqr
+import java.lang.Math.pow
+import kotlin.math.floor
 import kotlin.math.sqrt
 
 /**
@@ -115,14 +118,14 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double = TODO()
+fun abs(v: List<Double>): Double = if (v.isEmpty()) 0.0 else sqrt(v.fold(0.0) { previousElement, element -> previousElement + sqr(element) })
 
 /**
  * Простая
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double = TODO()
+fun mean(list: List<Double>): Double = if (list.isEmpty()) 0.0 else list.sum() / list.size
 
 /**
  * Средняя
@@ -132,7 +135,11 @@ fun mean(list: List<Double>): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> = TODO()
+fun center(list: MutableList<Double>): MutableList<Double> {
+    val avg = list.average()
+    list.forEachIndexed { index, d -> list[index] = d - avg }
+    return list
+}
 
 /**
  * Средняя
@@ -141,7 +148,7 @@ fun center(list: MutableList<Double>): MutableList<Double> = TODO()
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
-fun times(a: List<Double>, b: List<Double>): Double = TODO()
+fun times(a: List<Double>, b: List<Double>): Double = a.foldIndexed(0.0) { index, previousElement, element -> previousElement + element * b[index] }
 
 /**
  * Средняя
@@ -151,7 +158,7 @@ fun times(a: List<Double>, b: List<Double>): Double = TODO()
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0.0 при любом x.
  */
-fun polynom(p: List<Double>, x: Double): Double = TODO()
+fun polynom(p: List<Double>, x: Double): Double = p.foldIndexed(0.0) { index, previousElement, element -> previousElement + element * pow(x, index.toDouble()) }
 
 /**
  * Средняя
@@ -163,7 +170,16 @@ fun polynom(p: List<Double>, x: Double): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
+fun accumulate(list: MutableList<Double>): MutableList<Double> {
+    val copyList = list.toList()
+    list.forEachIndexed { index, d ->
+        if (index > 0) {
+            val sum = copyList.filterIndexed { deepIndex, deepD -> deepIndex < index }.sum()
+            list[index] += sum
+        }
+    }
+    return list
+}
 
 /**
  * Средняя
@@ -172,7 +188,18 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
  * Результат разложения вернуть в виде списка множителей, например 75 -> (3, 5, 5).
  * Множители в списке должны располагаться по возрастанию.
  */
-fun factorize(n: Int): List<Int> = TODO()
+fun factorize(n: Int): List<Int> {
+    val result = mutableListOf<Int>()
+    var numb = n
+    for (i in 2..floor(sqrt(n.toDouble())).toInt()) {
+        while (numb % i == 0) {
+            result += i
+            numb /= i
+        }
+    }
+    if (numb > 1) result += numb
+    return result.sorted().toList()
+}
 
 /**
  * Сложная
@@ -181,7 +208,18 @@ fun factorize(n: Int): List<Int> = TODO()
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  * Множители в результирующей строке должны располагаться по возрастанию.
  */
-fun factorizeToString(n: Int): String = TODO()
+fun factorizeToString(n: Int): String {
+    val result = mutableListOf<Int>()
+    var numb = n
+    for (i in 2..floor(sqrt(n.toDouble())).toInt()) {
+        while (numb % i == 0) {
+            result += i
+            numb /= i
+        }
+    }
+    if (numb > 1) result += numb
+    return result.sorted().joinToString(separator = "*")
+}
 
 /**
  * Средняя
@@ -190,7 +228,16 @@ fun factorizeToString(n: Int): String = TODO()
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> = TODO()
+fun convert(n: Int, base: Int): List<Int> {
+    var n = n
+    val result = mutableListOf<Int>()
+    while (n / base != 0) {
+        result += n % base
+        n /= base
+    }
+    result += n % base
+    return result.toList().reversed()
+}
 
 /**
  * Сложная
@@ -200,7 +247,22 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String = TODO()
+fun convertToString(n: Int, base: Int): String {
+    var n = n
+    val result = mutableListOf<Int>()
+    while (n / base != 0) {
+        result += n % base
+        n /= base
+    }
+    result += n % base
+    return result.toList().reversed().joinToString(separator = "", transform = {
+        if (it < 10) it.toString()
+        else {
+            (it + 87).toChar().toString()
+        }
+    })
+}
+
 
 /**
  * Средняя
@@ -209,7 +271,13 @@ fun convertToString(n: Int, base: Int): String = TODO()
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int = TODO()
+fun decimal(digits: List<Int>, base: Int): Int {
+    var result = 0
+    digits.reversed().forEachIndexed { index, it ->
+        result += it * pow(base.toDouble(), index.toDouble()).toInt()
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -220,7 +288,15 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    var result = 0
+    str.reversed().forEachIndexed { index, it ->
+        result += if (it.isDigit()) it.toString().toInt() * pow(base.toDouble(), index.toDouble()).toInt()
+        else (it - 87).toInt() * pow(base.toDouble(), index.toDouble()).toInt()
+
+    }
+    return result
+}
 
 /**
  * Сложная
@@ -230,7 +306,72 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    var result = ""
+    var digPlace = 1
+    var n = n
+    var numb = 0
+    do {
+        when (digPlace) {
+            1 -> {
+                numb = n % 10
+                when (numb) {
+                    in 1..3 -> {
+                        for (i in 1..numb) result = "I$result"
+                    }
+                    4 -> result = "IV$result"
+                    5 -> result = "V$result"
+                    in 6..8 -> {
+                        for (i in 1..numb - 5) result = "I$result"
+                        result = "V$result"
+
+                    }
+                    9 -> result = "IX$result"
+                    else -> result += ""
+                }
+            }
+            10 -> {
+                numb = n % 10
+                when (numb) {
+                    in 1..3 -> {
+                        for (i in 1..numb) result = "X$result"
+                    }
+                    4 -> result = "XL$result"
+                    5 -> result = "L$result"
+                    in 6..8 -> {
+                        for (i in 1..numb - 5) result = "X$result"
+                        result = "L$result"
+                    }
+                    9 -> result = "XC$result"
+                    else -> result += ""
+                }
+            }
+            100 -> {
+                numb = n % 10
+                when (numb) {
+                    in 1..3 -> {
+                        for (i in 1..numb) result = "C$result"
+                    }
+                    4 -> result = "CD$result"
+                    5 -> result = "D$result"
+                    in 6..8 -> {
+                        for (i in 1..numb - 5) result = "C$result"
+                        result = "D$result"
+                    }
+                    9 -> result = "CM$result"
+                    else -> result += ""
+                }
+            }
+            1000 -> {
+                numb = n % 10
+                for (i in 1..numb) result = "M$result"
+            }
+        }
+        n /= 10
+        digPlace *= 10
+    } while (n != 0)
+    return result
+}
 
 /**
  * Очень сложная
@@ -239,4 +380,135 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val ones = listOf(" один", " два", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять")
+    val ones2 = listOf(" одна", " две", " три", " четыре", " пять", " шесть", " семь", " восемь", " девять")
+    val tens = listOf(" десять", " одинадцать", " двенадцать", " тринадцать", " четырнадцать", " пятнадцать", " шестнадцать", " семнадцать", "восемнадцать", " девятнадцать")
+    val tens2 = listOf(" двадцать", " тридцать", " сорок", " пятьдесят", " шестьдесят", " семьдесят", " восемьдесят", " девяносто")
+    val hundreds = listOf(" сто", " двести", " триста", " четыреста", " пятьсот", " шестьсот", " семьсот", " восемьсот", " девятьсот")
+    var result = ""
+    var digPlace = 0
+    var n = n
+    var numb: Int
+    fun local1(number: Int, tempRes: String) = when (number) {
+        1 -> " ${ones[number - 1]}$tempRes"
+        in 2..4 -> "${ones[number - 1]}$tempRes"
+        in 5..9 -> "${ones[number - 1]}$tempRes"
+        else -> ""
+    }
+    do {
+        when (digPlace) {
+            0 -> {
+                numb = n % 1000
+                when (numb) {
+                    in 1..9 -> {
+                        result = local1(numb, result)
+                    }
+                    in 10..19 -> result = "${tens[numb - 10]}$result"
+                    in 20..99 -> {
+                        var numb2 = numb % 10
+                        result = local1(numb2, result)
+                        numb2 %= 10
+                        numb = n % 10
+                        when (numb) {
+                            in 2..9 -> result = "${tens2[numb - 2]}$result"
+                            else -> result += ""
+                        }
+                    }
+                    in 100..999 -> {
+                        var numb2 = numb % 100
+                        when (numb2) {
+                            in 1..9 -> {
+                                result = local1(numb2, result)
+                            }
+                            in 10..19 -> result = " $result${tens[numb2 - 10]}$result"
+                            in 20..99 -> {
+                                var numb3 = numb2 % 10
+                                result = local1(numb3, result)
+                                numb3 = numb2 / 10
+                                when (numb3) {
+                                    in 2..9 -> result = "${tens2[numb3 - 2]}$result"
+                                    else -> result += ""
+                                }
+                            }
+                            else -> result += ""
+                        }
+                        numb /= 100
+                        when (numb) {
+                            in 1..9 -> result = hundreds[numb - 1] + result
+                            else -> result += ""
+                        }
+                    }
+                    else -> result += ""
+                }
+            }
+            1 -> {
+                numb = n % 1000
+                when (numb) {
+                    in 1..9 -> {
+                        when (numb) {
+                            1 -> result = "${ones2[numb - 1]} тысяча$result"
+                            in 2..4 -> result = "${ones2[numb - 1]} тысячи$result"
+                            in 5..9 -> result = "${ones2[numb - 1]} тысяч$result"
+                        }
+                    }
+                    in 10..19 -> result = "${tens[numb - 10]} тысяч$result"
+                    in 20..99 -> {
+                        var numb2 = numb % 10
+                        when (numb2) {
+                            1 -> result = " ${ones2[numb2 - 1]} тысяча$result"
+                            in 2..4 -> result = "${ones2[numb2 - 1]} тысячи$result"
+                            in 5..9 -> result = "${ones2[numb2 - 1]} тысяч$result"
+                        }
+                        numb2 %= 10
+                        numb = n % 10
+                        when (numb) {
+                            in 2..9 -> result = "${tens2[numb - 2]}$result"
+                            else -> result += ""
+                        }
+                    }
+                    in 100..999 -> {
+                        var tempRes = ""
+                        numb /= 100
+                        when (numb) {
+                            in 1..9 -> tempRes = hundreds[numb - 1]
+                            else -> result += ""
+                        }
+                        var numb2 = n % 100
+                        when (numb2) {
+                            in 1..9 -> {
+                                when (numb2) {
+                                    1 -> result = "$tempRes${ones2[numb2 - 1]} тысяча$result"
+                                    in 2..4 -> result = "$tempRes${ones2[numb2 - 1]} тысячи$result"
+                                    in 5..9 -> result = " $tempRes${ones2[numb2 - 1]} тысяч$result"
+                                }
+                            }
+                            in 10..19 -> result = " $tempRes${tens[numb2 - 10]} тысяч$result"
+                            in 20..99 -> {
+                                var numb3 = numb2 % 10
+                                when (numb3) {
+                                    1 -> result = " $tempRes${ones2[numb2 - 1]} тысяча$result"
+                                    in 2..4 -> result = " $tempRes${ones2[numb3 - 1]} тысячи$result"
+                                    in 5..9 -> result = " $tempRes${ones2[numb3 - 1]} тысяч$result"
+                                }
+                                numb3 %= 10
+                                when (numb) {
+                                    in 2..9 -> result = " $tempRes${tens2[numb3 - 2]}$result"
+                                    else -> result += ""
+                                }
+                            }
+                            else -> result = "$tempRes тысяч$result"
+                        }
+                    }
+                    else -> result += ""
+                }
+                digPlace /= 100
+                n /= 100
+            }
+        }
+        n /= 1000
+        digPlace++
+    } while (n != 0)
+    result = result.trim()
+    return result
+}
