@@ -241,7 +241,7 @@ class Tests {
         assertEquals(from, mapOf("a" to "z", "b" to "c"))
 
         subtractOf(from, mapOf("a" to "z"))
-        assertEquals(from, mapOf("b" to "c"))
+        assertEquals(mapOf("b" to "c"), from)
     }
 
     @Test
